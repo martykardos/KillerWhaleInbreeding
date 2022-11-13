@@ -44,5 +44,5 @@ NeEstimator: linkage disequilibrium based analysis of contemporary effective pop
 
 GONE: linkage disequilibrium based analysis of recent (back to 150 generations ago) changes effective population size
 
-archiveFigCode
+archiveFigCode: Code used to make figures
 
