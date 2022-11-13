@@ -1,0 +1,153 @@
+##########################################################
+# filter for ROH analysis based on genotype likelihoods
+##########################################################
+# data are in /scratch/mkardos/orca/inbreeding on SEDNA
+
+# remove filtered loci
+srun vcftools --gzvcf kw_151.snp.final.vcf.gz --remove-filtered-all --recode --out kw_151.snp.final.passOnly &
+
+# retain only biallelic SNPs
+srun vcftools --vcf kw_151.snp.final.passOnly.recode.vcf --max-alleles 2 --recode --out kw_151.snp.final.passOnly.biallelicOnly &
+
+# remove indels
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.recode.vcf --remove-indels --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels &
+
+# remove invariant sites
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.recode.vcf --mac 1 --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1 &
+
+# remove duplicate individuals from the data (L22, NGOS09-12, and PWS-12-05, which were identified as duplicates because the have identical non-missing genotypes at >> 99% of loci). Also remove J32.fetus as it has very little sequence
+module load bio/vcftools
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1.recode.vcf --keep  keepKillerIndivs --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered &
+
+# get site depth
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.recode.vcf --site-depth --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.siteDepth &
+
+# get Hardy Weinberg stats
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.recode.vcf --hardy --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hardy &
+
+
+# get individual read depth
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.recode.vcf --idepth --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hardy &
+                    
+
+# Make a list of loci to keep. This excludes loci with excess of heterozygotes (where observed heterozygosity was > expected heterozygosity and the p-value from a test for deviation from Hardy-Weinberg proportions was < 0.01) or where mean read depth was > 17 or less than 5. 
+
+Use R script "rCode_filterLociHardyDepth_22July2022.R", which will produce a list of loci to keep called "keepLoci_orca_afterDepthHWFilter"
+
+# remove loci on the basis of high depth. These filters result in 6,186,425 loci remaining
+module load bio/vcftools
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.recode.vcf --positions keepLoci_orca_afterDepthHWFilter --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered &
+
+
+# get individual read depths and get allele frequencies
+module load bio/vcftools
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered.recode.vcf --depth --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered &
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered.recode.vcf --freq --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered &
+                    
+
+# get Phred-scaled genotype likelihoods (done 22 July 2022)
+module load bio/bcftools
+srun bcftools query -f '%CHROM %POS %REF %ALT [\t%PL]\n' kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered.recode.vcf > kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered.PL &
+                                                       
+
+# process genotype likelihoods into genotype probabilities for ROH analysis: download the output PL file and process with the following R script.
+Run R script "rCode_prepareGenotypeProbabilitiesForROH_1June2022.R"
+
+# run likelihood-based ROH detection
+Run R script "rCode_lodRohDetection_genoLikelihoods_2June2022.R"
+
+# calculate From
+Run R script "rCode_calculateFroh_5June2022.R"
+
+
+##################################################################################
+# Filter for Rxy and SFS analysis
+##################################################################################
+cd /scratch/mkardos/orca/inbreeding
+module load bio/vcftools
+
+
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered.recode.vcf --max-missing 0.75 --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_maxMiss0.25 &
+
+
+# make a PLINK tped/tfam set of files for analysis in R                  
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_maxMiss0.25.recode.vcf --plink-tped --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_maxMiss0.25 &
+
+
+###############################################################################
+# Estimate historical Ne with NeEstimator and GONE (Santiago et al. 2020, MBE)
+###############################################################################
+
+cd /scratch/mkardos/orca/inbreeding
+module load bio/vcftools
+
+# erase genotypes with GQ < 20
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered.recode.vcf --minGQ 20 --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20 &
+
+# remove loci missing at >25% of individuals
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20.recode.vcf --max-missing 0.75 --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25 &
+
+
+# remove the sex chromosome (chr6) for LD-based Ne analysis
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25.recode.vcf --not-chr chr6 --not-chr pseudo_Vchr1 --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly &
+
+
+# make separate vcf files for SRKW, ARKW, TKW
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly.recode.vcf --keep srkwIDs --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_srkwOnly &
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly.recode.vcf --keep arkwIDs --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_arkwOnly &
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly.recode.vcf --keep tkwIDs --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_tkwOnly &
+
+
+# evaluate individual missingness
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_srkwOnly.recode.vcf --missing-indv --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_srkwOnly &
+
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_arkwOnly.recode.vcf --missing-indv --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_arkwOnly &
+
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_tkwOnly.recode.vcf --missing-indv --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_tkwOnly &
+
+
+# remove individuals with high (> 10%) missingness
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_srkwOnly.recode.vcf --keep srkwMissingnessKeep --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_srkwOnly_lowMissing &
+
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_arkwOnly.recode.vcf --keep arkwMissingnessKeep --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_arkwOnly_lowMissing &
+
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_tkwOnly.recode.vcf --keep tkwMissingnessKeep --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_tkwOnly_lowMissing &
+
+
+# require minor allele count of 2 within each population as singletons can generate bias in LD-based Ne metrics
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_srkwOnly_lowMissing.recode.vcf --mac 2 --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_srkwOnly_lowMissing_mac2WithinPop &
+
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_arkwOnly_lowMissing.recode.vcf --mac 2 --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_arkwOnly_lowMissing_mac2WithinPop &
+
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_tkwOnly_lowMissing.recode.vcf --mac 2 --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_tkwOnly_lowMissing_mac2WithinPop &
+
+
+# make tped files to feed into NeEstimator
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_srkwOnly_lowMissing_mac2WithinPop.recode.vcf --plink-tped --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_srkwOnly_lowMissing_mac2WithinPop &
+
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_arkwOnly_lowMissing_mac2WithinPop.recode.vcf --plink-tped --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_arkwOnly_lowMissing_mac2WithinPop &
+
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_tkwOnly_lowMissing_mac2WithinPop.recode.vcf --plink-tped --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_tkwOnly_lowMissing_mac2WithinPop &
+
+
+# convert to ped/map format for analysis in GONE
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_srkwOnly_lowMissing_mac2WithinPop.recode.vcf --plink --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_srkwOnly_lowMissing_mac2WithinPop &
+
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_arkwOnly_lowMissing_mac2WithinPop.recode.vcf --plink --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_arkwOnly_lowMissing_mac2WithinPop &
+
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_tkwOnly_lowMissing_mac2WithinPop.recode.vcf --plink --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_tkwOnly_lowMissing_mac2WithinPop &
+
+# In the map files from just above here I renamed chromosomes so that they are 1:21 rather than c(1:5,7:22). Gone did not work when chromosomes were not named consecutively.
+# Files are in scratch/mkardos/orca/GONE/arkw, /scratch/mkardos/orca/GONE/srkw, and scratch/mkardos/orca/GONE/tkw
+
+# Made .ped files space delimited in R (see R scripts in the GONE folder)
+cd /scratch/mkardos/orca/GONE/arkw
+srun -c 20 -t 300:00:00 bash script_GONE.sh kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_arkwOnly_lowMissing_mac2WithinPop &
+
+cd /scratch/mkardos/orca/GONE/srkw
+srun -c 20 -t 300:00:00 bash script_GONE.sh kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_srkwOnly_lowMissing_mac2WithinPop &
+
+cd /scratch/mkardos/orca/GONE/tkw
+srun -c 20 -t 300:00:00 bash script_GONE.sh kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1_indivFiltered.hetDepthFiltered_minGQ20_maxMiss0.25_autosomesOnly_tkwOnly_lowMissing_mac2WithinPop &
+          
+

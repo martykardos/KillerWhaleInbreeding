@@ -1,0 +1,283 @@
+############## convert the Cetacean reference genomes into 70 bp fake reads in a fastq file/Users/martin.kardos/Documents/orca/orca/fastEPRR_code/orcaRecRateFiltering_ARKW_22Oct2020.rtf
+# data are in /scratch/mkardos/orca/cetaceanGenomes/cactus
+
+#######################################################################################
+# make a vcf file including only loci with >= 0.75 genotyping rate across individuals
+#######################################################################################
+cd /scratch/mkardos/orca/inbreeding
+module load bio/vcftools
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1.hetDepthFiltered.recode.vcf --max-missing 0.75 --recode --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1.hetDepthFiltered.maxMiss0.25 &
+
+
+# get read depths to make a list of positions that you will use to get mpileup from cetacean genomes
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1.hetDepthFiltered.maxMiss0.25.recode.vcf --site-depth --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1.hetDepthFiltered.maxMiss0.25 &
+
+# make a tped file
+srun vcftools --vcf kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1.hetDepthFiltered.maxMiss0.25.recode.vcf --plink-tped --out kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1.hetDepthFiltered.maxMiss0.25_plinkTPED &
+
+#################################################
+# Make a file containing the final positions 
+#################################################
+srun cut kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1.hetDepthFiltered.maxMiss0.25.ldepth -f 1,2 > kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1.hetDepthFiltered.maxMiss0.25_positions
+
+# remove the header 
+srun sed 1d kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1.hetDepthFiltered.maxMiss0.25_positions > kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1.hetDepthFiltered.maxMiss0.25_positions_noHeader
+
+# copy the output to where we're doing the genetic load work:
+cp kw_151.snp.final.passOnly.biallelicOnly.noIndels.mac1.hetDepthFiltered.maxMiss0.25_positions_noHeader /scratch/mkardos/orca/cetaceanGenomes/cactus
+
+###################################################################################################################################
+# convert lowercase (soft masked bases) to uppercase, and remove masked sequence from the references using script rCode_trimFasta.R
+###################################################################################################################################
+
+1) run R scripts 'rCode_trim_fasta_FASTAName.R' files to remove the hard masked sequence. do this by launching the shell scripts (.sh)
+Jobs of the format rCode_trim_fasta_FASTAName.sh
+
+2) find and replace lower case (soft masked) sites in each pruned fasta file
+
+# replace a with A
+srun sed -i 's/a/A/g' ASM322739v1_HiC_pruned.fasta &
+srun sed -i 's/a/A/g' GCF_008692025.1_mPhoSin1.pri_genomic_pruned.fasta &
+srun sed -i 's/a/A/g' GCA_009873245.3_mBalMus1.pri.v3_genomic_pruned.fasta &
+srun sed -i 's/a/A/g' Eschrichtius_robustus_HiC.softMask_pruned.fasta &
+srun sed -i 's/a/A/g' Eubalaena_glacialis_HiC_pruned.fasta &
+srun sed -i 's/a/A/g' ASM654740v1_HiC_pruned.fasta &
+srun sed -i 's/a/A/g' Mesoplodon_europaeus_HiC.softMask_pruned.fasta &
+srun sed -i 's/a/A/g' GCF_005190385.1_NGI_Narwhal_1_genomic_pruned.fasta &
+srun sed -i 's/a/A/g' Ovir.te_1.0_HiC_pruned.fasta &
+srun sed -i 's/a/A/g' ASM367639v1_HiC_pruned.fasta &
+srun sed -i 's/a/A/g' Bison_UMD1.0_HiC_pruned.fasta &
+
+
+# replace c with C
+srun sed -i 's/c/C/g' ASM322739v1_HiC_pruned.fasta &
+srun sed -i 's/c/C/g' GCF_008692025.1_mPhoSin1.pri_genomic_pruned.fasta &
+srun sed -i 's/c/C/g' GCA_009873245.3_mBalMus1.pri.v3_genomic_pruned.fasta &
+srun sed -i 's/c/C/g' Eschrichtius_robustus_HiC.softMask_pruned.fasta &
+srun sed -i 's/c/C/g' Eubalaena_glacialis_HiC_pruned.fasta &
+srun sed -i 's/c/C/g' ASM654740v1_HiC_pruned.fasta &
+srun sed -i 's/c/C/g' Mesoplodon_europaeus_HiC.softMask_pruned.fasta &
+srun sed -i 's/c/C/g' GCF_005190385.1_NGI_Narwhal_1_genomic_pruned.fasta &
+srun sed -i 's/c/C/g' Ovir.te_1.0_HiC_pruned.fasta &
+srun sed -i 's/c/C/g' ASM367639v1_HiC_pruned.fasta &
+srun sed -i 's/c/C/g' Bison_UMD1.0_HiC_pruned.fasta &
+
+# replace t with T
+srun sed -i 's/t/T/g' ASM322739v1_HiC_pruned.fasta &
+srun sed -i 's/t/T/g' GCF_008692025.1_mPhoSin1.pri_genomic_pruned.fasta &
+srun sed -i 's/t/T/g' GCA_009873245.3_mBalMus1.pri.v3_genomic_pruned.fasta &
+srun sed -i 's/t/T/g' Eschrichtius_robustus_HiC.softMask_pruned.fasta &
+srun sed -i 's/t/T/g' Eubalaena_glacialis_HiC_pruned.fasta &
+srun sed -i 's/t/T/g' ASM654740v1_HiC_pruned.fasta &
+srun sed -i 's/t/T/g' Mesoplodon_europaeus_HiC.softMask_pruned.fasta &
+srun sed -i 's/t/T/g' GCF_005190385.1_NGI_Narwhal_1_genomic_pruned.fasta &
+srun sed -i 's/t/T/g' Ovir.te_1.0_HiC_pruned.fasta &
+srun sed -i 's/c/C/g' ASM367639v1_HiC_pruned.fasta &
+srun sed -i 's/c/C/g' Bison_UMD1.0_HiC_pruned.fasta &
+
+
+# replace g with G
+srun sed -i 's/g/G/g' ASM322739v1_HiC_pruned.fasta &
+srun sed -i 's/g/G/g' GCF_008692025.1_mPhoSin1.pri_genomic_pruned.fasta &
+srun sed -i 's/g/G/g' GCA_009873245.3_mBalMus1.pri.v3_genomic_pruned.fasta &
+srun sed -i 's/g/G/g' Eschrichtius_robustus_HiC.softMask_pruned.fasta &
+srun sed -i 's/g/G/g' Eubalaena_glacialis_HiC_pruned.fasta &
+srun sed -i 's/g/G/g' ASM654740v1_HiC_pruned.fasta &
+srun sed -i 's/g/G/g' Mesoplodon_europaeus_HiC.softMask_pruned.fasta &
+srun sed -i 's/g/G/g' GCF_005190385.1_NGI_Narwhal_1_genomic_pruned.fasta &
+srun sed -i 's/g/G/g' Ovir.te_1.0_HiC_pruned.fasta &
+srun sed -i 's/g/G/g' ASM367639v1_HiC_pruned.fasta &
+srun sed -i 's/g/G/g' Bison_UMD1.0_HiC_pruned.fasta &
+
+###############################################
+# index the fasta files
+###############################################
+module load bio/samtools
+srun samtools faidx ASM322739v1_HiC_pruned.fasta &
+srun samtools faidx GCF_008692025.1_mPhoSin1.pri_genomic_pruned.fasta &
+srun samtools faidx GCA_009873245.3_mBalMus1.pri.v3_genomic_pruned.fasta &
+srun samtools faidx Eschrichtius_robustus_HiC.softMask_pruned.fasta &
+srun samtools faidx Eubalaena_glacialis_HiC_pruned.fasta &
+srun samtools faidx ASM654740v1_HiC_pruned.fasta &
+srun samtools faidx Mesoplodon_europaeus_HiC.softMask_pruned.fasta &
+srun samtools faidx GCF_005190385.1_NGI_Narwhal_1_genomic_pruned.fasta &
+srun samtools faidx Ovir.te_1.0_HiC_pruned.fasta &
+srun samtools faidx ASM367639v1_HiC_pruned.fasta &
+srun samtools faidx Bison_UMD1.0_HiC_pruned.fasta &
+
+
+
+# get chromosome sizes
+srun cut -f1,2  ASM322739v1_HiC_pruned.fasta.fai > chromSizes.ASM322739v1_HiC_pruned.fasta
+srun cut -f1,2  GCF_008692025.1_mPhoSin1.pri_genomic_pruned.fasta.fai > chromSizes.GCF_008692025.1_mPhoSin1.pri_genomic_pruned.fasta &
+srun cut -f1,2  GCA_009873245.3_mBalMus1.pri.v3_genomic_pruned.fasta.fai > chromSizes.GCA_009873245.3_mBalMus1.pri.v3_genomic_pruned.fasta &
+srun cut -f1,2  Eschrichtius_robustus_HiC.softMask_pruned.fasta.fai > chromSizes.Eschrichtius_robustus_HiC.softMask_pruned.fasta &
+srun cut -f1,2  Eubalaena_glacialis_HiC_pruned.fasta.fai > chromSizes.Eubalaena_glacialis_HiC_pruned.fasta & 
+srun cut -f1,2  ASM654740v1_HiC_pruned.fasta.fai > chromSizes.ASM654740v1_HiC_pruned.fasta &
+srun cut -f1,2  Mesoplodon_europaeus_HiC.softMask_pruned.fasta.fai > chromSizes.Mesoplodon_europaeus_HiC.softMask_pruned.fasta &
+srun cut -f1,2  GCF_005190385.1_NGI_Narwhal_1_genomic_pruned.fasta.fai > chromSizes.GCF_005190385.1_NGI_Narwhal_1_genomic_pruned.fasta &
+srun cut -f1,2  Ovir.te_1.0_HiC_pruned.fasta.fai > chromSizes.Ovir.te_1.0_HiC_pruned.fasta &
+srun cut -f1,2  ASM367639v1_HiC_pruned.fasta.fai > chromSizes.ASM367639v1_HiC_pruned.fasta &
+srun cut -f1,2  Bison_UMD1.0_HiC_pruned.fasta.fai > chromSizes.Bison_UMD1.0_HiC_pruned.fasta &
+
+
+
+############################################################################
+# make new fasta files with one line per quasi read
+############################################################################
+run R scripts makeReadBed_*species*.R to generate the bed files to make fastq files out of the fasta files. Launch with shell scripts of the same naming format. 
+
+#########################################
+# make subsequences using bedtools
+#########################################
+# there are .sh scripts for bison and Indopacific Bottlenose Dolphin (running these through srun causes some odd behavior on the had node) 
+
+srun bedtools getfasta -fi ASM322739v1_HiC_pruned.fasta -bed ASM322739v1_HiC_pruned_read.bed > ASM322739v1_HiC_pruned_reads1
+srun bedtools getfasta -fi GCF_008692025.1_mPhoSin1.pri_genomic_pruned.fasta -bed GCF_008692025.1_mPhoSin1.pri_genomic_pruned_read.bed > GCF_008692025.1_mPhoSin1.pri_genomic_pruned_reads1 &
+srun bedtools getfasta -fi GCA_009873245.3_mBalMus1.pri.v3_genomic_pruned.fasta -bed GCA_009873245.3_mBalMus1.pri.v3_genomic_pruned_read.bed > GCA_009873245.3_mBalMus1.pri.v3_genomic_pruned_reads1 &
+srun bedtools getfasta -fi Eschrichtius_robustus_HiC.softMask_pruned.fasta -bed Eschrichtius_robustus_HiC.softMask_pruned.fasta_read.bed > Eschrichtius_robustus_HiC.softMask_pruned_reads1 &
+srun bedtools getfasta -fi Eubalaena_glacialis_HiC_pruned.fasta -bed Eubalaena_glacialis_HiC_pruned_read.bed > Eubalaena_glacialis_HiC_pruned_reads1 &
+srun bedtools getfasta -fi ASM654740v1_HiC_pruned.fasta -bed ASM654740v1_HiC_pruned_read.bed > ASM654740v1_HiC_pruned_reads1 &
+srun bedtools getfasta -fi Mesoplodon_europaeus_HiC.softMask_pruned.fasta -bed Mesoplodon_europaeus_HiC.softMask_pruned_read.bed > Mesoplodon_europaeus_HiC.softMask_pruned_reads1 &
+srun bedtools getfasta -fi GCF_005190385.1_NGI_Narwhal_1_genomic_pruned.fasta -bed GCF_005190385.1_NGI_Narwhal_1_genomic_pruned_read.bed > GCF_005190385.1_NGI_Narwhal_1_genomic_pruned_reads1 &
+srun bedtools getfasta -fi Ovir.te_1.0_HiC_pruned.fasta -bed Ovir.te_1.0_HiC_pruned_read.bed > Ovir.te_1.0_HiC_pruned_reads1 &
+srun bedtools getfasta -fi ASM367639v1_HiC_pruned.fasta -bed ASM367639v1_HiC_pruned_read.bed > ASM367639v1_HiC_pruned_reads1 &
+srun bedtools getfasta -fi Bison_UMD1.0_HiC_pruned.fasta -bed Bison_UMD1.0_HiC_pruned_read.bed > Bison_UMD1.0_HiC_pruned_reads1 &
+
+
+
+###################################
+# turn the reads1 files into fastq
+###################################
+
+# replace the ">" in the read name line with "@"
+srun sed -i 's/>/@/g' ASM322739v1_HiC_pruned_reads1 &
+srun sed -i 's/>/@/g' GCF_008692025.1_mPhoSin1.pri_genomic_pruned_reads1 &
+srun sed -i 's/>/@/g' GCA_009873245.3_mBalMus1.pri.v3_genomic_pruned_reads1 &
+srun sed -i 's/>/@/g' Eschrichtius_robustus_HiC.softMask_pruned_reads1 &
+srun sed -i 's/>/@/g' Eubalaena_glacialis_HiC_pruned_reads1 &
+srun sed -i 's/>/@/g' ASM654740v1_HiC_pruned_reads1 &
+srun sed -i 's/>/@/g' Mesoplodon_europaeus_HiC.softMask_pruned_reads1 &
+srun sed -i 's/>/@/g' GCF_005190385.1_NGI_Narwhal_1_genomic_pruned_reads1 &
+srun sed -i 's/>/@/g' Ovir.te_1.0_HiC_pruned_reads1 &
+srun sed -i 's/>/@/g' ASM367639v1_HiC_pruned_reads1 &
+srun sed -i 's/>/@/g' Bison_UMD1.0_HiC_pruned_reads1 &
+
+#------------------------------------------------
+# make the fastq files with the custom R script
+#------------------------------------------------
+# run the shell scripts, which will launch R:
+
+sbatch ASM322739v1_HiC_pruned_makeFastq.sh
+sbatch ASM367639v1_HiC_pruned_makeFastq.sh                                 
+sbatch GCF_005190385.1_NGI_Narwhal_1_genomic_pruned_reads1_makeFastq.sh
+sbatch ASM654740v1_HiC_pruned_reads1_makeFastq.sh                          
+sbatch GCF_008692025.1_mPhoSin1.pri_genomic_pruned_reads1_makeFastq.sh
+sbatch Eschrichtius_robustus_HiC.softMask_pruned_reads1_makeFastq.sh       
+sbatch Mesoplodon_europaeus_HiC.softMask_pruned_reads1_makeFastq.sh
+sbatch Eubalaena_glacialis_HiC_pruned_reads1_makeFastq.sh                  
+sbatch Ovir.te_1.0_HiC_pruned_reads1_makeFastq.sh
+sbatch GCA_009873245.3_mBalMus1.pri.v3_genomic_pruned_reads1_makeFastq.sh
+sbatch Bison_UMD1.0_HiC_pruned_makeFastq.R.sh 
+
+
+
+##################################################################################
+# I run out of memory making the fastq for the info pacific bottlenose dolphin
+# Now, do it with sed and paste
+##################################################################################
+
+# separate the the read names with from the sequences
+
+srun sed -n '1~2!p' ASM322739v1_HiC_pruned_reads1 > ASM322739v1_HiC_pruned_reads1_readNames &
+srun sed -n '2~2!p' ASM322739v1_HiC_pruned_reads1 > ASM322739v1_HiC_pruned_reads1_readSeqs &
+
+# not that the file *readNames actually has the sequences and *readSeqs actually has the read names
+# make a file with the fake base quality scores
+Run shell script rCode_interleave.sh to make files of the fake base quality scores and plusses.
+
+# paste them together to make a fastq file
+srun paste -d '\n' ASM322739v1_HiC_pruned_reads1_readSeqs ASM322739v1_HiC_pruned_reads1_readNames ASM322739v1_HiC_pruned_reads1_pluses ASM322739v1_HiC_pruned_reads1_BQs > ASM322739v1_HiC_pruned.fastq &
+
+
+##########################################
+# index the killer whale reference genome
+##########################################
+srun bwa index kw_ref.fa kw_ref &                     
+        
+
+#############################################
+# align pseudo reads to the killer whale
+# reference genome
+#############################################
+Run shell scripts to launch bwa
+sbatch bwa_ASM322739v1_HiC_pruned.sh
+sbatch bwa_ASM367639v1_HiC_pruned.sh                            
+sbatch bwa_GCA_009873245.3_mBalMus1.pri.v3_genomic_pruned_reads1.sh
+sbatch bwa_ASM654740v1_HiC_pruned.sh                            
+sbatch bwa_GCF_005190385.1_NGI_Narwhal_1_genomic_pruned.sh
+sbatch bwa_Bison_UMD1.0_HiC_pruned.sh                           
+sbatch bwa_GCF_008692025.1_mPhoSin1.pri_genomic_pruned_reads1.sh
+sbatch bwa_Eschrichtius_robustus_HiC.softMask_pruned_reads1.sh  
+sbatch bwa_Mesoplodon_europaeus_HiC.softMask_pruned_reads1.sh
+sbatch bwa_Eubalaena_glacialis_HiC_pruned_reads1.sh             
+sbatch bwa_Ovir.te_1.0_HiC_pruned_reads1.sh                  
+
+
+#############################################
+# convert sam to bam
+#############################################
+
+srun samtools view -S -b ASM322739v1_HiC_pruned.sam > ASM322739v1_HiC_pruned.bam &
+srun samtools view -S -b ASM367639v1_HiC_pruned.sam > ASM367639v1_HiC_pruned.bam &
+srun samtools view -S -b ASM654740v1_HiC_pruned.sam >  ASM654740v1_HiC_pruned.bam &
+srun samtools view -S -b GCF_005190385.1_NGI_Narwhal_1_genomic_pruned_reads1.sam >  GCF_005190385.1_NGI_Narwhal_1_genomic_pruned_reads1.bam &
+srun samtools view -S -b Eschrichtius_robustus_HiC.softMask_pruned_reads1.sam >  Eschrichtius_robustus_HiC.softMask_pruned_reads1.bam  &    
+srun samtools view -S -b GCF_008692025.1_mPhoSin1.pri_genomic_pruned_reads1.sam >  GCF_008692025.1_mPhoSin1.pri_genomic_pruned_reads1.bam &
+srun samtools view -S -b Eubalaena_glacialis_HiC_pruned_reads1.sam > Eubalaena_glacialis_HiC_pruned_reads1.bam & 
+srun samtools view -S -b GCA_009873245.3_mBalMus1.pri.v3_genomic_pruned_reads1.sam >  GCA_009873245.3_mBalMus1.pri.v3_genomic_pruned_reads1.bam  & 
+srun samtools view -S -b Ovir.te_1.0_HiC_pruned_reads1.sam >  Ovir.te_1.0_HiC_pruned_reads1.bam &
+srun samtools view -S -b Mesoplodon_europaeus_HiC.softMask_pruned_reads1.sam > Mesoplodon_europaeus_HiC.softMask_pruned_reads1.bam & 
+srun samtools view -S -b Bison_UMD1.0_HiC_pruned.sam > Bison_UMD1.0_HiC_pruned.bam &
+
+
+################################
+# sort bams
+################################
+srun samtools sort ASM322739v1_HiC_pruned.bam -o ASM322739v1_HiC_pruned_sorted.bam &
+srun samtools sort ASM367639v1_HiC_pruned.bam -o ASM367639v1_HiC_pruned_sorted.bam &
+srun samtools sort ASM654740v1_HiC_pruned.bam -o ASM654740v1_HiC_pruned_sorted.bam &
+srun samtools sort GCF_005190385.1_NGI_Narwhal_1_genomic_pruned_reads1.bam -o GCF_005190385.1_NGI_Narwhal_1_genomic_pruned_reads1_sorted.bam &
+srun samtools sort Eschrichtius_robustus_HiC.softMask_pruned_reads1.bam -o Eschrichtius_robustus_HiC.softMask_pruned_reads1_sorted.bam &
+srun samtools sort GCF_008692025.1_mPhoSin1.pri_genomic_pruned_reads1.bam -o GCF_008692025.1_mPhoSin1.pri_genomic_pruned_reads1_sorted.bam &
+srun samtools sort Eubalaena_glacialis_HiC_pruned_reads1.bam -o Eubalaena_glacialis_HiC_pruned_reads1_sorted.bam &
+srun samtools sort GCA_009873245.3_mBalMus1.pri.v3_genomic_pruned_reads1.bam -o GCA_009873245.3_mBalMus1.pri.v3_genomic_pruned_reads1_sorted.bam &
+srun samtools sort Ovir.te_1.0_HiC_pruned_reads1.bam -o Ovir.te_1.0_HiC_pruned_reads1_sorted.bam &
+srun samtools sort Mesoplodon_europaeus_HiC.softMask_pruned_reads1.bam -o Mesoplodon_europaeus_HiC.softMask_pruned_reads1_sorted.bam &
+srun samtools sort Bison_UMD1.0_HiC_pruned.bam -o Bison_UMD1.0_HiC_pruned_sorted.bam &
+
+#####################################################################
+# variant calling with samtools
+#####################################################################
+Run shell script samtools_cetaceansVaraintCall.sh
+
+######################################################
+# convert from bcf to vcf
+######################################################
+Run shell script samtools_cetaceansVaraintCall_2.sh
+
+######################################################
+# extract genotype columns for parsing
+######################################################
+srun cut cetaceans.var.vcf -f 1,2,4,5,10,11,12,13,14,15,16,17,18,19,20 > cetaceans.var.genoCols &
+srun sed -i 1,50d cetaceans.var.genoCols &
+
+
+Run the VEP to identify deleterious alleles (see summary in variant_effect_output.txt_summary.html)
+
+#######################################################
+# slim down the variant effect predictor output
+#######################################################
+cut -f 1,2,3,7,14 variant_effect_output.txt > variant_effect_output_skinny
+
+

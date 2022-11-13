@@ -1,0 +1,1 @@
+/share/app/jdk8.0.92/jre/bin/java  -Xmx100G -jar /dellfsqd2/ST_OCEAN/USER/zhangyaolei/zyllei/Software/pilon/pilon-1.23.jar --genome ./genome.fa --frags ../align.bam --output genome_polish_round1.fa --outdir ./ --chunksize 25000000 --threads 16 --verbose

@@ -1,0 +1,12 @@
+README for folder recombinationRate
+
+orca_filtering_forRecRates_3August2020 contains the commands used for filtering raw SNP data for analysis in FastEPRR
+
+repeatMask_kw_ref.bed is a bed file containing repeat masked regions in the genome assembly
+
+rCode_excludeRepeatsFromRecRateEstimation_25August2020.R is an R script that we used to remove repeat regions from the SNP data fed into FastEPRR
+
+R scripts of the format rCode_makeSeqsFromBeagleOutput_repeatMasked_chr1.R (where chr1 indicates that this particular script processes data on chromosome 1) converts the SNP data to .fas files to be compatible with FastEPRR.
+
+R scripts with naming format fastEPPR_orcaChr*_&_repeatMasked_longWins.R (“*” represents chromosome number and “&” represents segment number) run FastEPRR.
+

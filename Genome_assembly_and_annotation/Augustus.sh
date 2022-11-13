@@ -1,0 +1,1 @@
+/share/biosoft/pipeline/DNA/DNA_annotation/software/Augustus/augustus.3.3/bin/augustus --species=human --AUGUSTUS_CONFIG_PATH=/share/biosoft/pipeline/DNA/DNA_annotation/software/Augustus/augustus.3.3/config/ --uniqueGeneId=true --noInFrameStop=true --gff3=on --strand=both xx/ref_genome_mask.fa > xx/ref_genome_mask.fa.augustus

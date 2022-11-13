@@ -1,0 +1,1 @@
+rCode_estimateTimeOfIsolation_31August2022.R estimates the number of generation required for a completely isolated population with the same Ne as the SRKW to have lost the amount of genetic variation that is the difference in generation variation between the SRKW and ARKW. 

@@ -1,0 +1,857 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2513
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red255\green255\blue255;\red255\green255\blue255;
+}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\csgray\c100000;\cssrgb\c100000\c100000\c100000;
+}
+\margl1440\margr1440\vieww35340\viewh17460\viewkind0
+\deftab720
+\pard\pardeftab720\sl300\partightenfactor0
+
+\f0\fs22 \cf2 \expnd0\expndtw0\kerning0
+\
+# minimum genotype quality score 30\
+vcftools --gzvcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.vcf.gz\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --minGQ 30 --recode --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30 &\
+\
+#remove loci with > X % missing genotypes across individuals\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.recode.vcf --max-missing 0.9 --\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 recode --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss10Perc &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 vcftools --gzvcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.recode.vcf.gz\cb3  --max-missing 0.8 --\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 recode --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --missing-indv  --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_indvMISS &\
+\
+#remove individuals missing more than 20% of the genotypes\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --keep\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  \cb1 keepOrcasMaxMiss0.2 --recode \cb3 --out \cb1 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0 \
+# get Hardy Weinberg and read depth stats\
+\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --keep\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  \cb1 keepSRKWIndivs.txt \expnd0\expndtw0\kerning0
+\CocoaLigature1 --\kerning1\expnd0\expndtw0 \CocoaLigature0 hardy \cb3 --out \cb1 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc_SRKWOnly &\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --keep\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  \cb1 keepSRKWIndivs.txt \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-depth\kerning1\expnd0\expndtw0 \CocoaLigature0  \cb3 --out \cb1 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc_SRKWOnly &\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0 \
+# keep loci in the middle 95% of the depth distribution, and that have exact test for HW deviation > 0.05\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  \cb1 keepLociOrcas \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode\kerning1\expnd0\expndtw0 \CocoaLigature0  \cb3 --out \cb1 kkw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc_depthHWFilter &\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0 \
+# make a 012 file\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kkw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc_depthHWFilter.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012\kerning1\expnd0\expndtw0 \CocoaLigature0  \cb3 --out \cb1 kkw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc_depthHWFilter_012 &\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \
+##################################################################\
+# split the vcf file up into individual chromosomes\
+# for phasing with SHAPEIT\
+##################################################################\
+\pard\pardeftab720\sl300\partightenfactor0
+\cf2 \
+# check missingness among SRKW\
+vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --missing-indv\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --out \cb1 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw.recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \
+#keep Individuals with < 20% missing data\
+\pard\pardeftab720\sl300\partightenfactor0
+\cf2 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --keep\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  \cb1 srkwLowMissKeep --recode \cb3 --out \cb1 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \
+# split up into separate chromosomes\
+\pard\pardeftab720\sl300\partightenfactor0
+\cf2 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr1\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr1 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr2\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr2 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr3\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr3 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr4\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr4 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr5\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr5 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr6\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr6 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr7\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr7 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr8\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr8 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr9\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr9 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr10\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr10 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr11\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr11 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr12\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr12 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr13\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr13 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr14\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr14 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr15\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr15 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr16\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr16 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr17\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr17 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr18\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr18 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr19\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr19 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr20\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr20 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr21\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr21 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --chr chr22\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr22 &\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cf2 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+#########################################################\
+# get hardy-weinberg and read depth statistics\
+#########################################################\
+\
+\pard\pardeftab720\sl300\partightenfactor0
+\cf2 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr22.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --depth --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr22 &\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cf2 module load bio/vcftools\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cf2 \cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr1.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr1_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr2.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr2_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr3.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr3_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr4.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr4_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr5.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr5_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr6.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr6_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr7.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr7_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr8.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr8_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr9.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr9_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr10.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr10_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr11.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr11_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr12.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr12_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr13.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr13_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr14.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr14_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr15.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr15_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr16.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr16_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr17.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr17_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr18.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr18_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr19.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr19_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr20.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr20_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr21.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr21_depth\cb3  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr22.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --site-mean-depth --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr22_depth\cb3  &\
+\pard\pardeftab720\sl300\partightenfactor0
+\cf2 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cf2 \cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr1.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr1_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr2.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr2_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr3.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr3_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr4.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr4_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr5.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr5_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr6.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr6_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr7.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr7_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr8.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr8_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr9.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr9_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr10.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr10_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node26 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr11.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr11_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr12.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr12_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr13.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr13_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr14.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr14_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr15.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr15_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr16.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr16_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr17.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr17_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr18.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr18_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr19.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr19_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr20.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr20_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr21.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr21_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=1 --mem=2GB \cb1 vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr22.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --hardy --out \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr22_\expnd0\expndtw0\kerning0
+\CocoaLigature1 hardy\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  &\
+\pard\pardeftab720\sl300\partightenfactor0
+\cf2 \
+###############################################################################\
+# retain loci with read depth in the central 95% of the genome-wide distribution, \
+# and with a P-value for deviation from HW proportions > 0.05\
+###############################################################################\
+\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr1.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_1\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr1 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr2.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_2\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr2 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr3.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_3\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr3 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr4.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_4\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr4 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr5.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_5\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr5 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr6.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_6\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr6 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr7.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_7\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr7 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr8.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_8\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr8 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr9.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_9\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr9 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr10.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_10\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr10 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr11.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_11\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr11 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr12.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_12\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr12 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr13.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_13\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr13 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr14.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_14\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr14 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr15.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_15\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr15 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr16.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_16\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr16 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr17.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_17\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr17 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr18.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_18\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr18 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr19.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_19\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr19 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr20.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_20\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr20 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr21.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_21\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr21 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr22.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --positions \kerning1\expnd0\expndtw0 \CocoaLigature0 keepPositionOrca_22\cb3  --recode\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22 &\
+\
+\
+######## make 012 files\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr1.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr1_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr2.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr2_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr3.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr3_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr4.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr4_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr5.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr5_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr6.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr6_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr7.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr7_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr8.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr8_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr9.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr9_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr10.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr10_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr11.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr11_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr12.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr12_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr13.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr13_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr14.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr14_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr15.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr15_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr16.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr16_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr17.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr17_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr18.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr18_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr19.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr19_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr20.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr20_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr21.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr21_012 &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22.recode.vcf \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --012 --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final\cb3 .minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22_012 &\
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+# make a .idepth file for a list of individual IDs\
+\pard\pardeftab720\sl300\partightenfactor0
+\cf2 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr9.phased.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --depth\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr9.depth\cb3  &\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\
+#################################################################################################################\
+# Exclude loci in repeat regions. I used the R script rCode_excludeRepeatsFromRecRateEstimation_25August2020.R\
+# on DOC Mac laptop to generate a list of SNPs to exclude using vcftools. The repeat regions are from a bed file\
+# (repeatMask_kw_ref.bed)\
+#################################################################################################################\
+\
+\pard\pardeftab720\sl300\partightenfactor0
+\cf2 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr1.recode.vcf \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr1.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr2.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr2 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr2.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr3.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr3 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr3.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr4.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr4 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr4.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr5.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr5 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr5.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr6.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr6 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr6.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr7.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr7 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr7.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr8.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr8 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr8.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr9.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr9 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr9.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr10.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr10 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr10.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr11.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr11 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr11.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr12.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr12 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr12.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr13.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr13 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr13.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr14.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr14 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr14.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr15.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr15 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr15.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr16.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr16 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr16.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr17.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr17 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr17.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr18.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr18 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr18.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr19.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr19 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr19.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr20.phased.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr20 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr20.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr21.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr21 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr21.repeatMasked\cb3  &\
+\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 srun vcftools --vcf  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --exclude-positions \kerning1\expnd0\expndtw0 \CocoaLigature0 excludeLociRepeats_chr22 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --recode --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22.repeatMasked\cb3  &\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\
+##############################################################################\
+# use BEAGLE to phase the data\
+##############################################################################\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cf2 \cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node04 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr1.log --job-name=orcaPhasing_chr1\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr1.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr1.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node05 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr2.log --job-name=orcaPhasing_chr2\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr2.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr2.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node06 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr3.log --job-name=orcaPhasing_chr3\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr3.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr3.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node07 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr4.log --job-name=orcaPhasing_chr4\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr4.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr4.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node08 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr5.log --job-name=orcaPhasing_chr5\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr5.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr5.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node09 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr6.log --job-name=orcaPhasing_chr6\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr6.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr6.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node10 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr7.log --job-name=orcaPhasing_chr7\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr7.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr7.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node11 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr8.log --job-name=orcaPhasing_chr8\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr8.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr8.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node12 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr9.log --job-name=orcaPhasing_chr9\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr9.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr9.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node13 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr10.log --job-name=orcaPhasing_chr10\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr10.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr10.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node14 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr11.log --job-name=orcaPhasing_chr11\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr11.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr11.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node15 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr12.log --job-name=orcaPhasing_chr12\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr12.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr12.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node16 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr13.log --job-name=orcaPhasing_chr13\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr13.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr13.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node17 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr14.log --job-name=orcaPhasing_chr14\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr14.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr14.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node18 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr15.log --job-name=orcaPhasing_chr15\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr15.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr15.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node19 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr16.log --job-name=orcaPhasing_chr16\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr16.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr16.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node20 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr17.log --job-name=orcaPhasing_chr17\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr17.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr17.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node21 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr18.log --job-name=orcaPhasing_chr18\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr18.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr18.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node22 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr19.log --job-name=orcaPhasing_chr19\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr19.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr19.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node23 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr20.log --job-name=orcaPhasing_chr20 \expnd0\expndtw0\kerning0
+\CocoaLigature1 java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr20.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr20.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node24 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr21.log --job-name=orcaPhasing_chr21\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr21.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr21.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\cb4 \kerning1\expnd0\expndtw0 \CocoaLigature0 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node25 --cpus-per-task=20 --mem=90GB \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 --output=orcaPhasing_chr22.log --job-name=orcaPhasing_chr22\expnd0\expndtw0\kerning0
+\CocoaLigature1  java \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 Xmx50g \kerning1\expnd0\expndtw0 \CocoaLigature0 -\expnd0\expndtw0\kerning0
+\CocoaLigature1 jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22.repeatMasked.recode.vcf ne=10000\expnd0\expndtw0\kerning0
+\CocoaLigature1  out=\kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22.repeatMasked_phased impute=false nthreads=40 &\expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \
+# make a .idepth file for a list of individual IDs\
+\pard\pardeftab720\sl300\partightenfactor0
+\cf2 srun vcftools --vcf \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22.phased.repeatMasked.recode.vcf\cb3  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 --depth\cb3 \kerning1\expnd0\expndtw0 \CocoaLigature0  \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  --out  \kerning1\expnd0\expndtw0 \CocoaLigature0 kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22.phased.repeatMasked\cb3  &\cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \
+\
+\
+###################################################\
+# make sequence .fas files for analysis in fasteprr\
+###################################################\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cf2 \kerning1\expnd0\expndtw0 \CocoaLigature0 Run R scripts /scratch/mkardos/orca/beagle/\
+\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node01 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr1.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node01 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr2.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node01 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr3.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node01 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr4.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node01 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr5.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node01 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr6.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node01 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr7.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node02 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr8.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node02 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr9.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node02 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr10.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node02 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr11.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node02 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr12.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node02 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr13.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node02 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr14.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node03 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr15.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node03 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr16.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node03 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr17.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node03 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr18.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node03 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr19.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node03 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr20.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node03 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr21.R &\
+\cb4 srun \expnd0\expndtw0\kerning0
+\CocoaLigature1  --nodelist=node03 --cpus-per-task=1 --mem=10GB\cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0  R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr22.R &\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cf2 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 ############# run FastEPRR using R scripts with naming format fastEPPR_orcaChr*_&_repeatMasked_longWins.R (\'93*\'94 represents chromosome number and \'93&\'94 represents segment number) in fastEPRR subdirectories\
+\
+ \kerning1\expnd0\expndtw0 \
+\pard\pardeftab720\sl220\partightenfactor0
+\cf2 \cb4 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\sl220\partightenfactor0
+\cf2 \cb1 \kerning1\expnd0\expndtw0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab720\pardirnatural\partightenfactor0
+\cf2 \expnd0\expndtw0\kerning0
+\
+}

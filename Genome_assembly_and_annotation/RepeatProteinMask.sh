@@ -1,0 +1,1 @@
+xx/software/repeat/RepeatMasker-open-4-0-6/RepeatMasker/RepeatProteinMask  -engine  ncbi  -noLowSimple  -pvalue  0.0001  xx/ref_genome.fa

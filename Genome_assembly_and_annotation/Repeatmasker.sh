@@ -1,0 +1,1 @@
+xx/software/repeat/RepeatMasker-open-4-0-6/RepeatMasker/RepeatMasker  -q  -nolow  -no_is  -norna  -engine  ncbi  -parallel  1  -lib  xx/database/RepBase/RepBase21.01/RepeatMaskerLib.embl.lib  xx/ref_genome.fa  >  run.log  2>  run.log2

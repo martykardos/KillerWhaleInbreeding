@@ -1,0 +1,31 @@
+Genome assembly:
+#step1. genome assembly using Nextdenovo with nanopore data
+sh work.sh
+
+#step2. genome polish using short reads
+sh bwa.sh
+sh polish.sh
+
+#step3. anchor scaffolds to chromosomes using Hic sequencing data
+sh hicpro.sh
+sh Juicer.sh
+sh 3ddna.sh
+
+Genome annotation
+#Repeat
+sh Repeatmasker.sh 
+sh RepeatProteinMask.sh
+
+#gene
+##denovo
+perl remask.pl ref_genome.fa repeat.gff > ef_genome_mask.fa
+sh Augustus.sh 
+perl Convert_Augustus.pl  ref_genome_mask.fa.augustus Augustus >ref_genome_mask.fa.augustus.gff
+## homolog
+perl blat_homolog_annotation.pl -p xx/homology_species.protein.fa -r xx/ref_genome.fa  -t 5 -vf 20g -a 0.3 -d 0.2 -c 100  -e 1000 -q "-P P18Z19700N0073 -l num_proc=1" 
+##EVM
+sh evm_step_1.partition.sh
+sh evm_step_2.write_EVM_commands.sh
+sh evm_step_3.recombine_EVM_partial_outputs.sh
+sh evm_step_4.ConvertGFF3Format.sh
+sh evm_step_5.cat_EVM_out.sh
