@@ -47,3 +47,5 @@ GONE: linkage disequilibrium based analysis of recent (back to 150 generations a
 archiveFigCode: Code used to make figures
 
 quantPop_0.3.9.tar.gz is an R package used in several analyses
+
+demog_models_code contains the code used in the models of fitness components (survival/fecundity) as a function of inbreeding, sex, age, and year
