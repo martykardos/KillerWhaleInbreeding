@@ -1,0 +1,48 @@
+---
+title: "make_tables"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(knitr)
+```
+
+Table 1.  
+```{r}
+d = readRDS("Table_1.rds")
+knitr::kable(d[-2,], digits = 3)
+```
+
+Table S9. 
+```{r}
+d = readRDS("table_S9.rds")
+knitr::kable(d[-2,], digits = 3)
+```
+
+Table S10. 
+```{r}
+d = readRDS("Table_S10.rds")
+knitr::kable(d[-2,], digits = 3)
+```
+
+Table S11.
+```{r}
+d = readRDS("table_S11.rds")
+knitr::kable(d[-2,], digits = 3)
+```
+
+Table S12.
+```{r}
+d = readRDS("Table_S12.rds")
+knitr::kable(d[-2,], digits = 3)
+```
+
+Table S13. 
+```{r}
+d = readRDS("Table_S13.rds")
+knitr::kable(d[-2,], digits = 3)
+```
