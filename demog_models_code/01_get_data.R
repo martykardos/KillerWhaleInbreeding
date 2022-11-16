@@ -1,3 +1,4 @@
+remotes::install_github("nwfsc-cb/srkw-status", ref="586cab3") # install package -- ref is from Jan 2022
 library(kwdemog)
 library(dplyr)
 # genetic data
