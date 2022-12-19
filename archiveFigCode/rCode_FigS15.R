@@ -14,6 +14,7 @@ props <- counts/100000
 h <- 0.5*(exp(-13*seq(0,1,0.0001)))
 
 plot(c(-1,0),c(0,0.9),xlab=expression(paste("-",italic(""*s*""))),ylab="Frequency",type="n",cex.lab=1.5)
+text(x=-1.25,y=1,labels="A",cex=2)
 for(i in 1:length(starts)){
   rect(xright=0-(starts[i]),xleft=0-(starts[i]+0.05),ybottom=0,ytop=props[i],col="#a6bddb",border="#a6bddb")
 }
