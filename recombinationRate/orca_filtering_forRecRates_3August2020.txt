@@ -1,0 +1,266 @@
+
+# minimum genotype quality score 30
+vcftools --gzvcf kw_151.snp.final.vcf.gz --minGQ 30 --recode --out kw_151.snp.final.minGQ30 &
+
+#remove loci with > X % missing genotypes across individuals
+vcftools --vcf kw_151.snp.final.minGQ30.recode.vcf --max-missing 0.9 --recode --out kw_151.snp.final.minGQ30.minGQ30_maxMiss10Perc &
+vcftools --gzvcf kw_151.snp.final.minGQ30.recode.vcf.gz --max-missing 0.8 --recode --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc &
+vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc.recode.vcf --missing-indv  --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_indvMISS &
+
+#remove individuals missing more than 20% of the genotypes
+vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc.recode.vcf --keep keepOrcasMaxMiss0.2 --recode --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc
+
+# get Hardy Weinberg and read depth stats
+
+vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc.recode.vcf --keep keepSRKWIndivs.txt --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc_SRKWOnly &
+vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc.recode.vcf --keep keepSRKWIndivs.txt --site-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc_SRKWOnly &
+
+# keep loci in the middle 95% of the depth distribution, and that have exact test for HW deviation > 0.05
+vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc.recode.vcf --positions keepLociOrcas --recode --out kkw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc_depthHWFilter &
+
+# make a 012 file
+vcftools --vcf kkw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc_depthHWFilter.recode.vcf --012 --out kkw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_maxIndivMiss20Perc_depthHWFilter_012 &
+
+##################################################################
+# split the vcf file up into individual chromosomes
+# for phasing with SHAPEIT
+##################################################################
+
+# check missingness among SRKW
+vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw.recode.vcf --missing-indv --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw.recode
+
+#keep Individuals with < 20% missing data
+vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw.recode.vcf --keep srkwLowMissKeep --recode --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc
+
+# split up into separate chromosomes
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr1 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr1 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr2 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr2 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr3 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr3 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr4 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr4 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr5 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr5 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr6 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr6 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr7 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr7 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr8 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr8 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr9 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr9 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr10 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr10 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr11 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr11 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr12 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr12 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr13 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr13 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr14 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr14 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr15 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr15 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr16 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr16 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr17 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr17 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr18 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr18 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr19 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr19 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr20 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr20 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr21 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr21 &
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.recode.vcf --chr chr22 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr22 &
+
+
+#########################################################
+# get hardy-weinberg and read depth statistics
+#########################################################
+
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr22.recode.vcf --depth --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr22 &
+module load bio/vcftools
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr1.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr1_depth &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr2.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr2_depth &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr3.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr3_depth &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr4.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr4_depth &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr5.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr5_depth &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr6.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr6_depth &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr7.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr7_depth &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr8.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr8_depth &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr9.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr9_depth &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr10.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr10_depth &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr11.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr11_depth &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr12.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr12_depth &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr13.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr13_depth &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr14.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr14_depth &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr15.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr15_depth &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr16.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr16_depth &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr17.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr17_depth &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr18.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr18_depth &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr19.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr19_depth &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr20.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr20_depth &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr21.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr21_depth &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr22.recode.vcf --site-mean-depth --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr22_depth &
+
+
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr1.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr1_hardy &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr2.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr2_hardy &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr3.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr3_hardy &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr4.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr4_hardy &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr5.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr5_hardy &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr6.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr6_hardy &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr7.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr7_hardy &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr8.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr8_hardy &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr9.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr9_hardy &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr10.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr10_hardy &
+srun  --nodelist=node26 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr11.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr11_hardy &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr12.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr12_hardy &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr13.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr13_hardy &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr14.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr14_hardy &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr15.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr15_hardy &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr16.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr16_hardy &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr17.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr17_hardy &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr18.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr18_hardy &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr19.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr19_hardy &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr20.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr20_hardy &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr21.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr21_hardy &
+srun  --nodelist=node25 --cpus-per-task=1 --mem=2GB vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr22.recode.vcf --hardy --out kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr22_hardy &
+
+###############################################################################
+# retain loci with read depth in the central 95% of the genome-wide distribution, 
+# and with a P-value for deviation from HW proportions > 0.05
+###############################################################################
+
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr1.recode.vcf --positions keepPositionOrca_1 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr1 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr2.recode.vcf --positions keepPositionOrca_2 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr2 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr3.recode.vcf --positions keepPositionOrca_3 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr3 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr4.recode.vcf --positions keepPositionOrca_4 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr4 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr5.recode.vcf --positions keepPositionOrca_5 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr5 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr6.recode.vcf --positions keepPositionOrca_6 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr6 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr7.recode.vcf --positions keepPositionOrca_7 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr7 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr8.recode.vcf --positions keepPositionOrca_8 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr8 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr9.recode.vcf --positions keepPositionOrca_9 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr9 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr10.recode.vcf --positions keepPositionOrca_10 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr10 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr11.recode.vcf --positions keepPositionOrca_11 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr11 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr12.recode.vcf --positions keepPositionOrca_12 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr12 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr13.recode.vcf --positions keepPositionOrca_13 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr13 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr14.recode.vcf --positions keepPositionOrca_14 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr14 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr15.recode.vcf --positions keepPositionOrca_15 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr15 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr16.recode.vcf --positions keepPositionOrca_16 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr16 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr17.recode.vcf --positions keepPositionOrca_17 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr17 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr18.recode.vcf --positions keepPositionOrca_18 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr18 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr19.recode.vcf --positions keepPositionOrca_19 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr19 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr20.recode.vcf --positions keepPositionOrca_20 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr20 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr21.recode.vcf --positions keepPositionOrca_21 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr21 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr22.recode.vcf --positions keepPositionOrca_22 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22 &
+
+
+######## make 012 files
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr1.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr1_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr2.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr2_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr3.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr3_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr4.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr4_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr5.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr5_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr6.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr6_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr7.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr7_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr8.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr8_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr9.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr9_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr10.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr10_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr11.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr11_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr12.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr12_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr13.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr13_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr14.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr14_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr15.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr15_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr16.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr16_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr17.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr17_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr18.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr18_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr19.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr19_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr20.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr20_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr21.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr21_012 &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22.recode.vcf --012 --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22_012 &
+
+
+# make a .idepth file for a list of individual IDs
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr9.phased.vcf --depth  --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc.chr9.depth &
+
+
+#################################################################################################################
+# Exclude loci in repeat regions. I used the R script rCode_excludeRepeatsFromRecRateEstimation_25August2020.R
+# on DOC Mac laptop to generate a list of SNPs to exclude using vcftools. The repeat regions are from a bed file
+# (repeatMask_kw_ref.bed)
+#################################################################################################################
+
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr1.recode.vcf --exclude-positions excludeLociRepeats_chr1 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr1.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr2.recode.vcf --exclude-positions excludeLociRepeats_chr2 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr2.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr3.recode.vcf --exclude-positions excludeLociRepeats_chr3 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr3.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr4.recode.vcf --exclude-positions excludeLociRepeats_chr4 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr4.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr5.recode.vcf --exclude-positions excludeLociRepeats_chr5 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr5.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr6.recode.vcf --exclude-positions excludeLociRepeats_chr6 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr6.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr7.recode.vcf --exclude-positions excludeLociRepeats_chr7 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr7.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr8.recode.vcf --exclude-positions excludeLociRepeats_chr8 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr8.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr9.recode.vcf --exclude-positions excludeLociRepeats_chr9 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr9.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr10.recode.vcf --exclude-positions excludeLociRepeats_chr10 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr10.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr11.recode.vcf --exclude-positions excludeLociRepeats_chr11 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr11.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr12.recode.vcf --exclude-positions excludeLociRepeats_chr12 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr12.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr13.recode.vcf --exclude-positions excludeLociRepeats_chr13 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr13.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr14.recode.vcf --exclude-positions excludeLociRepeats_chr14 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr14.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr15.recode.vcf --exclude-positions excludeLociRepeats_chr15 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr15.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr16.recode.vcf --exclude-positions excludeLociRepeats_chr16 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr16.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr17.recode.vcf --exclude-positions excludeLociRepeats_chr17 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr17.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr18.recode.vcf --exclude-positions excludeLociRepeats_chr18 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr18.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr19.recode.vcf --exclude-positions excludeLociRepeats_chr19 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr19.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr20.phased.vcf --exclude-positions excludeLociRepeats_chr20 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr20.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr21.recode.vcf --exclude-positions excludeLociRepeats_chr21 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr21.repeatMasked &
+srun vcftools --vcf  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22.recode.vcf --exclude-positions excludeLociRepeats_chr22 --recode --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22.repeatMasked &
+
+
+##############################################################################
+# use BEAGLE to phase the data
+##############################################################################
+
+srun  --nodelist=node04 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr1.log --job-name=orcaPhasing_chr1 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr1.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr1.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node05 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr2.log --job-name=orcaPhasing_chr2 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr2.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr2.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node06 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr3.log --job-name=orcaPhasing_chr3 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr3.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr3.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node07 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr4.log --job-name=orcaPhasing_chr4 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr4.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr4.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node08 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr5.log --job-name=orcaPhasing_chr5 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr5.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr5.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node09 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr6.log --job-name=orcaPhasing_chr6 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr6.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr6.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node10 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr7.log --job-name=orcaPhasing_chr7 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr7.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr7.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node11 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr8.log --job-name=orcaPhasing_chr8 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr8.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr8.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node12 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr9.log --job-name=orcaPhasing_chr9 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr9.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr9.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node13 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr10.log --job-name=orcaPhasing_chr10 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr10.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr10.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node14 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr11.log --job-name=orcaPhasing_chr11 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr11.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr11.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node15 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr12.log --job-name=orcaPhasing_chr12 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr12.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr12.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node16 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr13.log --job-name=orcaPhasing_chr13 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr13.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr13.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node17 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr14.log --job-name=orcaPhasing_chr14 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr14.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr14.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node18 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr15.log --job-name=orcaPhasing_chr15 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr15.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr15.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node19 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr16.log --job-name=orcaPhasing_chr16 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr16.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr16.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node20 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr17.log --job-name=orcaPhasing_chr17 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr17.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr17.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node21 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr18.log --job-name=orcaPhasing_chr18 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr18.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr18.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node22 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr19.log --job-name=orcaPhasing_chr19 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr19.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr19.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node23 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr20.log --job-name=orcaPhasing_chr20 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr20.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr20.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node24 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr21.log --job-name=orcaPhasing_chr21 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr21.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr21.repeatMasked_phased impute=false nthreads=40 &
+srun  --nodelist=node25 --cpus-per-task=20 --mem=90GB --output=orcaPhasing_chr22.log --job-name=orcaPhasing_chr22 java -Xmx50g -jar /scratch/mkardos/orca/beagle/beagle.18May20.d20.jar gt=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22.repeatMasked.recode.vcf ne=10000 out=kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22.repeatMasked_phased impute=false nthreads=40 &
+
+# make a .idepth file for a list of individual IDs
+srun vcftools --vcf kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22.phased.repeatMasked.recode.vcf --depth  --out  kw_151.snp.final.minGQ30.minGQ30_maxMiss20Perc_srkw_indvMissMax20Perc_readDepCent95Perc_HWPValMin005_chr22.phased.repeatMasked &
+
+
+
+###################################################
+# make sequence .fas files for analysis in fasteprr
+###################################################
+Run R scripts /scratch/mkardos/orca/beagle/
+
+srun  --nodelist=node01 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr1.R &
+srun  --nodelist=node01 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr2.R &
+srun  --nodelist=node01 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr3.R &
+srun  --nodelist=node01 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr4.R &
+srun  --nodelist=node01 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr5.R &
+srun  --nodelist=node01 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr6.R &
+srun  --nodelist=node01 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr7.R &
+srun  --nodelist=node02 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr8.R &
+srun  --nodelist=node02 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr9.R &
+srun  --nodelist=node02 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr10.R &
+srun  --nodelist=node02 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr11.R &
+srun  --nodelist=node02 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr12.R &
+srun  --nodelist=node02 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr13.R &
+srun  --nodelist=node02 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr14.R &
+srun  --nodelist=node03 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr15.R &
+srun  --nodelist=node03 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr16.R &
+srun  --nodelist=node03 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr17.R &
+srun  --nodelist=node03 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr18.R &
+srun  --nodelist=node03 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr19.R &
+srun  --nodelist=node03 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr20.R &
+srun  --nodelist=node03 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr21.R &
+srun  --nodelist=node03 --cpus-per-task=1 --mem=10GB R CMD BATCH rCode_makeSeqsFromBeagleOutput_repeatMasked_chr22.R &
+
+
+############# run FastEPRR using R scripts with naming format fastEPPR_orcaChr*_&_repeatMasked_longWins.R (“*” represents chromosome number and “&” represents segment number) in fastEPRR subdirectories
+
+ 
+
+
