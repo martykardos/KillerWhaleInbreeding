@@ -3,7 +3,10 @@ This repository contains code used for data analysis and figures in the followin
 Inbreeding depression explains killer whale population dynamics
 
 Marty Kardos, Yaolei Zhang, Kim M. Parsons, Yunga A, Hui Kang, Xun Xu, Xin Liu, Craig O. Matkin, Peijun Zhang, Eric J. Ward, M. Bradley Hanson, Candice Emmons, Michael J. Ford, Guangyi Fan, Songhai Li
-	
+
+
+
+
 
 
 
