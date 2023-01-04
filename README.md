@@ -51,7 +51,7 @@ NeEstimator: linkage disequilibrium based analysis of contemporary effective pop
 
 GONE: linkage disequilibrium based analysis of recent (back to 150 generations ago) changes effective population size
 
-archiveFigCode: Code used to make figures
+FigureCode: Code used to make figures
 
 quantPop_0.3.9.tar.gz is an R package used in several analyses
 
