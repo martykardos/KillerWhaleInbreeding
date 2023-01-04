@@ -1,0 +1,5 @@
+Files with names beginning with "rCode_Fig_ED" are R scripts that generate Extended Data figures. 
+
+Files with names beginning with "rCode_Supp_Fig" are R scripts that generate Supplementary figures.
+
+Files with names beginning with "rCode_Fig" are R scripts that generate figures in the main text of the paper.
