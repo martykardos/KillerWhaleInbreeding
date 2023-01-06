@@ -4,6 +4,10 @@ Files names with prefix "rCode_Supp_Fig" are R scripts that generate Supplementa
 
 Files names with prefix "rCode_Fig_" are R scripts that generate figures in the main text of the paper.
 
+Supplementary Figure 5, is produced using a custom script “pca.r”.
+
+Supplementary Figure 4, is produced using “BUSCO_plot.py” from BUSCO Package, not a custom script.
+
 Some figures do not have associated code:
 Supplementary Figure 1 was drawn with Adobe Illustrator so there is no associated code.
 
